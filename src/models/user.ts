@@ -1,10 +1,12 @@
 import { model, Schema } from "mongoose";
 
-interface TClimber {
+export interface TClimber {
   email: string;
   password: string;
   name: string;
   lastName: string;
+  hash: string;
+  role: string;
 }
 
 const climberSchema = new Schema<TClimber>({
@@ -12,6 +14,8 @@ const climberSchema = new Schema<TClimber>({
   password: { type: String, required: true },
   name: { type: String, required: true },
   lastName: { type: String, required: true },
+  hash: { type: String },
+  role: { type: String, required: true },
 });
 
 const ClimberModel = model<TClimber>("Climber", climberSchema);
@@ -40,20 +44,22 @@ export const createNewClimber = async (
   email: string,
   password: string,
   name: string,
-  lastName: string
+  lastName: string,
+  hash: string,
+  role: string
 ) => {
   const climber = await getClimberByEmail(email);
   if (climber) {
     throw new Error("Climber já existe");
   }
 
-  const newClimber = new ClimberModel({ email, password, name, lastName });
+  const newClimber = new ClimberModel({ email, password, name, lastName, hash, role });
 
   try {
     await newClimber.save();
     console.log("Climber criado com sucesso!");
     return newClimber;
-  } catch (error) {
+  } catch (error: any) {
     console.log("Erro ao criar climber:", error);
     return error;
   }

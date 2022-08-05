@@ -12,7 +12,7 @@ type TTokenDTO = {
 class tokenDTO {
   token!: string;
   expireAt!: Date | moment.Moment;
-  contructor({ _id, createdAt }: TTokenDTO) {
+  constructor({ _id, createdAt }: TTokenDTO) {
     const expireAt = moment(createdAt);
     expireAt.add(3, "d");
 

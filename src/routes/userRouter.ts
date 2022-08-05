@@ -1,17 +1,21 @@
 import { Router } from "express";
-import { createToken } from "../models/token";
+import { createToken, TToken } from "../models/token";
 import {
   createNewClimber,
   getClimberByEmail,
   searchAllClimbers,
   searchOneClimber,
+  TClimber,
 } from "../models/user";
 import tokenDTO from "../views/tokenDTO";
 import UserDTO from "../views/userDTO";
+import bcrypt from "bcrypt";
 
 const userRouter = Router();
 
-// Buscar climbers ??
+// cria um salt com uma palavra aleatória de 15 caracteres
+const SALT = 15;
+
 userRouter.get("/", (req, res) => {
   // const email = req.body;
 
@@ -30,14 +34,15 @@ userRouter.get("/", (req, res) => {
 
 // New climber
 userRouter.post("/register", async (req, res) => {
-  // só os dados que necessitam
-  const { email, password, name, lastName } = req.body;
+  const { email, password, name, lastName, role } = req.body;
+
+  const hash = bcrypt.hashSync(password, SALT);
 
   if (!email || !password || !name || !lastName) {
     res.status(400).send("Alguns dados obrigatórios não foram preenchidos.");
   }
 
-  const newClimber = await createNewClimber(email, password, name, lastName);
+  const newClimber: TClimber = await createNewClimber(email, password, name, lastName, hash, role);
 
   res.status(201).json(new UserDTO(newClimber));
 });
@@ -48,22 +53,19 @@ userRouter.post("/login", async (req, res) => {
 
   const climber = await getClimberByEmail(email);
 
-  // verifica usuario
   if (!climber) {
-    res.status(403).send("Não autorizado");
+    res.status(403).send("Não encontrado");
     return;
   }
 
-  //  verifica senha
-  if (climber.password !== password) {
-    res.status(403).send("Não autorizado");
-    return;
-  }
+  // if (!bcrypt.compareSync(password, climber.password)) {
+  //   res.status(403).send("Email ou senha inválidos");
+  //   return;
+  // }
 
-  // cria token
-  const token = await createToken(new Date(), true, climber._id);
+  // const token = await createToken(new Date(), true, climber.id);
 
-  res.status(201).send(new tokenDTO(token));
+  res.status(201).send("new tokenDTO(token)");
 });
 
 // logout

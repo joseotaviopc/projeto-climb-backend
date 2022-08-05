@@ -1,8 +1,9 @@
-import { model, Schema } from "mongoose";
+import { model, ObjectId, Schema } from "mongoose";
 
 type Category = "Boulder" | "Esportiva" | "Parede" | "Psicobloc" | "Ginásio";
 
 interface TClimbModel {
+  _id: ObjectId;
   name: string;
   local: string;
   category: Category;
@@ -36,6 +37,20 @@ const climbSchema = new Schema<TClimbModel>({
 
 const ClimbModel = model<TClimbModel>("LocalClimb", climbSchema);
 
+export const searchOneClimbById = async (id: string): Promise<TClimbModel | null | Error> => {
+  try {
+    const resp = await ClimbModel.findById({
+      _id: id,
+    });
+
+    console.log("Local encontrado com sucesso");
+    return resp;
+  } catch (error) {
+    console.log("Erro:", error);
+    return error as Error;
+  }
+};
+
 export const searchOneClimb = async (name: string) => {
   try {
     const resp = await ClimbModel.findOne({
@@ -43,6 +58,7 @@ export const searchOneClimb = async (name: string) => {
     });
 
     console.log("Local encontrado com sucesso", resp);
+    return resp;
   } catch (error) {
     console.log("Erro:", error);
     return error;
@@ -50,15 +66,15 @@ export const searchOneClimb = async (name: string) => {
 };
 
 export const searchAllClimbs = async () => {
-  await ClimbModel.find();
-  // try {
-  //   const resp = await ClimbModel.find();
-  //   console.log("Locais encontrados");
-  //   return resp;
-  // } catch (error) {
-  //   console.log("Erro:", error);
-  //   return error;
-  // }
+  // await ClimbModel.find();
+  try {
+    const resp = await ClimbModel.find();
+    console.log("Locais encontrados");
+    return resp;
+  } catch (error) {
+    console.log("Erro:", error);
+    return error;
+  }
 };
 
 export const saveNewClimb = async (
@@ -110,3 +126,24 @@ export const updateClimb = async (local: string) => {
     return error;
   }
 };
+
+export const saveImageToClimbs = async (id: string, path: string) => {
+  try {
+    const climb = await ClimbModel.findById(id);
+
+    if (climb) {
+      climb.photo_url.push(path);
+      return await climb.save();
+    }
+    console.log("Id não encontrado");
+    
+  } catch (error) {
+    console.log("Erro:", error);
+    return error;
+  }
+
+    
+
+
+};
+// envia via From ou Form-encoded, no thunder Client (file)

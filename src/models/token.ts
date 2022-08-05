@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import moment from "moment";
 
-interface TToken {
+export interface TToken {
   createdAt?: Date;
   active?: boolean;
   userId: string;

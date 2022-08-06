@@ -1,0 +1,1 @@
+{"version":3,"file":"dberro.js","sourceRoot":"","sources":["../../src/errors/dberro.ts"],"names":[],"mappings":";;AAAA,MAAM,OAAQ,SAAQ,KAAK;IACvB,YAAY,OAAe;QACzB,KAAK,CAAC,GAAG,OAAO,EAAE,CAAC,CAAC;QACpB,IAAI,CAAC,IAAI,GAAG,aAAa,CAAC;IAC5B,CAAC;CACJ;AAAA,CAAC;AAEF,kBAAe,OAAO,CAAC"}
